@@ -1,10 +1,35 @@
 ﻿@page
-@model IndexModel
-@{
-    ViewData["Title"] = "Home page";
-}
+@using Microsoft.EntityFrameworkCore
+@using ProjectPractical.Data
+@inject ApplicationDbContext Context
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h1>Тест базы данных</h1>
+
+@{
+    try
+    {
+        var products = await Context.Products.ToListAsync();
+        var users = await Context.Users.ToListAsync();
+
+        <div class="alert alert-success">
+            <h4>✅ База подключена успешно!</h4>
+            <p>Продуктов: @products.Count</p>
+            <p>Пользователей: @users.Count</p>
+        </div>
+
+        <h3>Продукты:</h3>
+        <ul>
+            @foreach (var p in products)
+            {
+                <li>@p.Name - @p.Price ₽</li>
+            }
+        </ul>
+    }
+    catch (Exception ex)
+    {
+        <div class="alert alert-danger">
+            <h4>❌ Ошибка подключения к базе:</h4>
+            <p>@ex.Message</p>
+        </div>
+    }
+}
